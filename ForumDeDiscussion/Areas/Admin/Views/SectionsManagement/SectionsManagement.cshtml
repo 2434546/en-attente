@@ -1,0 +1,119 @@
+﻿@model IEnumerable<ForumDeDiscussion.Models.Section>
+
+@{
+    ViewData["Title"] = "Section Management Page";
+}
+
+<div>
+    <h1>Gestion des sections</h1>
+    @if (User.IsInRole("Admin"))
+    {
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSectionModal">
+            Ajouter une nouvelle Section
+        </button>
+    }
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Nom</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var sections in Model)
+        {
+            <tr>
+                <td>@sections.Title</td>
+                <td>
+                    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#editSectionModal" onclick="loadSectionDetails(@sections.Id)">
+                        Modifier
+                    </button>
+                    <a class="btn btn-danger" asp-controller="SectionsManagement" asp-action="Delete" asp-route-id="@sections.Id">Supprimer</a>
+                </td>
+            </tr>
+        }
+            
+        <!--
+        <tr>
+            <td colspan="3">Aucune section trouvé</td>
+        </tr>
+        -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal pour ajouter une Section -->
+<div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSectionModalLabel">Ajouter une nouvelle Section</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="SectionsManagement" asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Titre de la Section</label>
+                        <input type="text" class="form-control" id="Name" name="Name" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour modifier une Section -->
+<div class="modal fade" id="editSectionModal" tabindex="-1" aria-labelledby="editSectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editSectionModalLabel">Modifier une Section</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editSectionForm" asp-controller="SectionsManagement" asp-action="Edit" method="post">
+                    <input type="hidden" id="SectionId" name="sectionId" value="" />
+                    <div class="mb-3">
+                        <label for="Title" class="form-label">Titre de la Section</label>
+                        <input type="text" class="form-control" id="Title" name="title" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Modifier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial"/>
+    <script>
+    function loadSectionDetails(sectionId) {
+        $.ajax({
+            url: 'https://localhost:7299/Admin/SectionsManagement/GetSectionDetails/' + sectionId,
+            type: 'GET',
+            success: function (data) {
+                $('#SectionId').val(data.sectionId);
+                $('#Title').val(data.name);
+            },
+            error: function(xhr, status, error) {
+                //var err = eval("(" + xhr.responseText + ")");
+                alert(xhr.responseText);
+            }
+            //function (err) {
+                //alert(err);
+                //alert('Erreur lors du chargement des données.');
+            //}
+        });
+    }
+</script>
+}

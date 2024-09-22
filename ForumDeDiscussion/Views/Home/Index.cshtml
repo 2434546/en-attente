@@ -1,0 +1,40 @@
+﻿@model List<ForumDeDiscussion.ViewModels.SectionViewModel>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Sections</h1>
+    <div class="row">
+        @foreach (var sec in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a asp-controller="Subjects" asp-action="Subjects" asp-route-sectionId="@sec.SectionId">@sec.SectionName</a>
+                        </h5>
+                        <p class="card-text">
+                            <strong>Sujets:</strong> @sec.TopicCount<br />
+                            <strong>Messages:</strong> @sec.MessageCount
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        @if (sec.LastMessageDate.HasValue && sec.LastMessageId.HasValue)
+                        {
+                            <small class="text-muted">
+                                Dernier message le @sec.LastMessageDate.Value.ToString("dd/MM/yyyy HH:mm")
+                                <a asp-controller="Messages" asp-action="Messages" asp-route-id="@sec.LastMessageId" class="ms-2">Voir le message</a>
+                            </small>
+                        }
+                        else
+                        {
+                            <small class="text-muted">Pas de messages</small>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

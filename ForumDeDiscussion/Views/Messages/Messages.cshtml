@@ -1,0 +1,106 @@
+﻿@model List<ForumDeDiscussion.ViewModels.MessageViewModel>
+
+@{
+    ViewData["Title"] = "Conversation";
+}
+
+<div class="container conversation-container mt-5">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+
+    <div class="messages-area mb-4" id="messagesArea" style="max-height: 500px; overflow-y: auto;">
+        @if (Model != null && Model.Any())
+        {
+            <div class="d-flex flex-column-reverse">
+                @foreach (var message in Model.OrderByDescending(m => m.Date))
+                {
+                    <div class="@(message.Author == User.Identity.Name ? "d-flex justify-content-end" : "d-flex justify-content-start")" style="position: relative;">
+                        <div class="message-bubble p-3 rounded mb-2" style="max-width: 70%; background-color: @(message.Author == User.Identity.Name ? "#007BFF" : "#e9ecef"); color: @(message.Author == User.Identity.Name ? "white" : "black");">
+                            <div class="message-content">
+                                <p>@message.Content</p>
+                                <small class="message-info">@message.Author - @message.Date.ToString("dd/MM/yyyy HH:mm")</small>
+                            </div>
+                            
+                            @if (message.Author == User.Identity.Name)
+                            {
+                                <div class="message-actions" style="position: absolute; right: 10px; top: 5px;">
+                                    <button type="button" class="btn btn-link text-white p-0" data-bs-toggle="modal" data-bs-target="#editMessageModal" onclick="loadMessageDetails(@message.MessageId)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <form asp-action="DeleteMessage" asp-route-id="@message.MessageId" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-link text-white p-0">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-center">Aucun message trouvé pour ce sujet.</p>
+        }
+    </div>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Membre"))
+    {
+        <div class="message-form mt-4">
+            <form asp-controller="Messages" asp-action="SendMessage" method="post">
+                <input type="hidden" name="subjectId" value="@ViewBag.SujetId" />
+                <div class="input-group">
+                    <input type="text" class="form-control" id="content" name="content" placeholder="Écrivez un message..." required />
+                    <button type="submit" class="btn btn-primary">Envoyer</button>
+                </div>
+            </form>
+        </div>
+    }
+</div>
+
+<!-- Modal pour modifier un message -->
+<div class="modal fade" id="editMessageModal" tabindex="-1" aria-labelledby="editMessageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMessageModalLabel">Modifier le message</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editMessageForm" asp-action="EditMessage" method="post">
+                    <input type="hidden" id="MessageId" name="MessageId" />
+                    <div class="mb-3">
+                        <label for="Content" class="form-label">Message</label>
+                        <input type="text" class="form-control" id="Content" name="Content" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Modifier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function loadMessageDetails(messageId) {
+            $.ajax({
+                url: '/Messages/GetMessageDetails/' + messageId,
+                type: 'GET',
+                success: function (data) {
+                    $('#MessageId').val(data.messageId);
+                    $('#Content').val(data.content);
+                },
+                error: function () {
+                    alert('Erreur lors du chargement des données.');
+                }
+            });
+        }
+
+        let messagesArea = document.getElementById('messagesArea');
+        messagesArea.scrollTop = messagesArea.scrollHeight;
+    </script>
+}

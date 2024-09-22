@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Home Page Admin";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="mb-4">Administration</h1>
+
+            <div class="d-grid gap-3">
+                <a asp-area="Admin" asp-controller="SectionsManagement" asp-action="SectionsManagement" class="btn btn-outline-primary btn-lg">
+                    Gestion des sections
+                </a>
+                <a asp-area="Admin" asp-controller="MembersManagement" asp-action="MembersManagement" class="btn btn-outline-secondary btn-lg">
+                    Gestion des membres
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

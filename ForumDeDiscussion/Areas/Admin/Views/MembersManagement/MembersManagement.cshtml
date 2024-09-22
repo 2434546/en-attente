@@ -1,0 +1,144 @@
+﻿@model IEnumerable<ForumDeDiscussion.Models.Member>
+
+@{
+    ViewData["Title"] = "Gestion des Membres";
+}
+
+<div class="container mt-5">
+    <h1>Liste des membres</h1>
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+        Ajouter un Membre
+    </button>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Nom d'Affichage</th>
+            <th>Courriel</th>
+            <th>Nom d'utilisateur</th>
+            <th>Rôle</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var member in Model)
+        {
+            <tr>
+                <td>@member.Name</td>
+                <td>@member.Email</td>
+                <td>@member.UserName</td>
+                <td>@member.Role</td>
+                <td>
+                    <!--<a asp-controller="MembersManagement" asp-action="" asp-route-id="@member.Id" class="btn btn-warning">Modifier</a>-->
+                    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#editMemberModal">
+                        Modifier un Membre
+                    </button>
+                    <a asp-controller="MembersManagement" asp-action="Delete" asp-route-id="@member.Id" class="btn btn-danger">Supprimer</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal ajouter un membre -->
+<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMemberModalLabel">Ajouter un nouveau Membre</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-area="Admin" asp-controller="MembersManagement" asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Nom</label>
+                        <input type="text" class="form-control" id="Name" name="Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Firstname" class="form-label">Prénom</label>
+                        <input type="text" class="form-control" id="Firstname" name="Firstname" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="Email" name="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="UserName" class="form-label">Nom d'utilisateur</label>
+                        <input type="text" class="form-control" id="UserName" name="UserName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Password" class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" id="Password" name="Password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Rôle</label>
+                        <select class="form-control">
+                            <option value="Choix">Veuillez choisir un rôle</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Membre">Membre</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div> 
+
+<!-- Modal modifier un membre -->
+<div class="modal fade" id="editMemberModal" tabindex="-1" aria-labelledby="editMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMemberModalLabel">Modifier un nouveau Membre</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-area="Admin" asp-controller="MembersManagement" asp-action="EditProfile" method="post">
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Nom</label>
+                        <input type="text" class="form-control" id="Name" name="Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Firstname" class="form-label">Prénom</label>
+                        <input type="text" class="form-control" id="Firstname" name="Firstname" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="Email" name="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="UserName" class="form-label">Nom d'utilisateur</label>
+                        <input type="text" class="form-control" id="UserName" name="UserName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Password" class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" id="Password" name="Password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ConfirmPassword" class="form-label">Confirmer le nouveau mot de passe</label>
+                        <input id="ConfirmPassword" name="ConfirmPassword" class="form-control" type="password" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Role" class="form-label">Rôle</label>
+                        <select class="form-control">
+                            <option value="Choix">Veuillez choisir un rôle</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Membre">Membre</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Modifier</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div> 

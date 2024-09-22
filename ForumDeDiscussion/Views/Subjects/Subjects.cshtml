@@ -1,0 +1,122 @@
+﻿@using System.Security.Claims
+@model List<ForumDeDiscussion.ViewModels.SubjectViewModel>
+
+@{
+    ViewData["Title"] = "Sujets de la Section";
+}
+
+<div class="container mt-5">
+    <h1>Sujets</h1>
+    @if (User.IsInRole("Admin") || User.IsInRole("Membre"))
+    {
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
+            Ajouter un Sujet
+        </button> 
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var subject in Model)
+            {
+                <tr>
+                    <td><a asp-controller="Messages" asp-action="Messages" asp-route-id="@subject.SubjectId">@subject.Name</a></td>
+                    <td>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Membre"))
+                        {
+                            @if (User.IsInRole("Admin") || subject.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                            {
+                                <button type="button" class="btn" style="background-color: pink" data-bs-toggle="modal" data-bs-target="#editSubjectModal" onclick="loadSubjectDetails(@subject.SubjectId)">Modifier</button>
+                                <a asp-controller="Subjects" asp-action="Delete" asp-route-id="@subject.SubjectId" class="btn btn-danger">Supprimer</a>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="2">Aucun sujet trouvé.</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal pour ajouter un sujet -->
+<div class="modal fade" id="addSubjectModal" tabindex="-1" aria-labelledby="addSubjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSubjectModalLabel">Ajouter un nouveau Sujet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Subjects" asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Titre du Sujet</label>
+                        <input type="text" class="form-control" id="Name" name="Name" required>
+                    </div>
+                    <input type="hidden" name="SectionId" value="@ViewBag.SectionId" />
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour éditer un sujet -->
+<div class="modal fade" id="editSubjectModal" tabindex="-1" aria-labelledby="editSubjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editSubjectModalLabel">Modifier le sujet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editSubjectForm" asp-controller="Subjects" asp-action="Edit" method="post">
+                    <input type="hidden" id="SubjectId" name="SubjectId" />
+                    <input type="hidden" id="SectionId" name="SectionId" value="@ViewBag.SectionId" />
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Titre du Sujet</label>
+                        <input type="text" class="form-control" id="Title" name="Title" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Modifier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial"/>
+    <script>
+    function loadSubjectDetails(subjectId) {
+        $.ajax({
+            url: '/Subjects/GetSubjectDetails/' + subjectId,
+            type: 'GET',
+            success: function (data) {
+                $('#SubjectId').val(data.subjectId);
+                $('#Title').val(data.Title);
+            },
+            error: function () {
+                alert('Erreur lors du chargement des données.');
+            }
+        });
+    }
+    </script>
+}

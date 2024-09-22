@@ -1,0 +1,52 @@
+﻿@model ForumDeDiscussion.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Register Page";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-transparent text-center">
+                    <h2 class="fw-bold text-dark">S'inscrire</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Register" asp-controller="Auth" method="post">
+                        <div class="form-floating mb-3">
+                            <input asp-for="Name" class="form-control rounded-pill" id="floatingName" placeholder="Votre nom">
+                            <label for="floatingName">Nom</label>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Firstname" class="form-control rounded-pill" id="floatingFirstname" placeholder="Votre prénom">
+                            <label for="floatingFirstname">Prénom</label>
+                            <span asp-validation-for="Firstname" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="UserName" class="form-control rounded-pill" id="floatingUserName" placeholder="Nom d'utilisateur">
+                            <label for="floatingUserName">Nom d'utilisateur</label>
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" type="email" class="form-control rounded-pill" id="floatingEmail" placeholder="name@example.com">
+                            <label for="floatingEmail">Adresse email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Password" type="password" class="form-control rounded-pill" id="floatingPassword" placeholder="Mot de passe">
+                            <label for="floatingPassword">Mot de passe</label>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill">S'inscrire</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
